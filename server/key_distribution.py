@@ -1,6 +1,10 @@
 import os
 from base64 import b64encode
 
+import sys
+sys.path.insert(0, '../lib')
+import lib
+
 FOLDER = "database"
 AS_NAME = "AS"
 TGS_NAME = "TGS"
@@ -24,12 +28,8 @@ def configure_server(ID):
     key = b64encode(random_bytes).decode('utf-8')
     save(ID, key)
 
-def one_way_hash(word):
-    #TODO do not do this
-    return hash(word)
-
 def configure_user(ID, passwd):
-    key = one_way_hash(passwd)
+    key = lib.one_way_hash(passwd)
     ID = "user_{}".format(ID)
     
     if os.path.isfile("{}/{}.data".format(FOLDER, ID)):

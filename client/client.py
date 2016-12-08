@@ -1,6 +1,6 @@
 import requests
 import sys
-sys.path.insert(0, '..')
+sys.path.insert(0, '../lib')
 import lib
 import urllib
 import getpass
@@ -35,7 +35,7 @@ class KerberosClient():
     
     def authorize(self, TGT, TGS_key, service_id):
         unencrypted = str((TGT, service_id))
-        encrypted = lib.encrypt(str((self.user, time())), TGS_key)
+        encrypted = lib.encrypt_tuple((self.user, time()), TGS_key)
         
         CTS, CTS_key_encrypted = send((unencrypted, encrypted), URL_TGS).split()
         CTS_key = lib.decrypt(CTS_key_encrypted, TGS_key)
