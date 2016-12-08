@@ -5,7 +5,7 @@ import sys
 sys.path.insert(0, '../lib')
 import lib
 
-FOLDER = "database"
+FOLDER = os.path.dirname(os.path.realpath(__file__)) + "/database"
 AS_NAME = "AS"
 TGS_NAME = "TGS"
 SS_NAME = "SS"

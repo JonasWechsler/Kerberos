@@ -4,11 +4,13 @@ from ast import literal_eval
 import uuid
 import server
 import cgi
+import os
 
 import sys
 sys.path.insert(0, '../lib')
 import lib
 
+FOLDER = os.path.dirname(os.path.realpath(__file__))
 SERVER = 'localhost'
 PORT_NUMBER = 8082
 TIMEOUT = 60*60 #An hour
@@ -34,8 +36,11 @@ class SSServerBasic(server.ResponseServer):
             return 'IP does not match ticket'
         if CTS[2] < time():
             return 'Session expired, please re-authenticate'
-        print 'received {} from {}'.format(message, CTS[0])
-        with open('response.txt') as reader:
+        return self.process_msg(message, CTS[0])
+
+    def process_msg(self, message, user):
+        print 'received {} from {}'.format(message, user)
+        with open('{}/response.txt'.format(FOLDER)) as reader:
             return reader.read()
 
 if __name__ == '__main__':

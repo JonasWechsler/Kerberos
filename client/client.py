@@ -10,6 +10,11 @@ from time import time
 URL_AS = 'http://localhost:8080/client'
 URL_TGS = 'http://localhost:8081/client'
 URL_SS = 'http://localhost:8082/client'
+PORTS = {
+    'Basic': '8082',
+    'Bad': '8083',
+    'Talk': '8084'
+        }
 
 def send(args, url):
     mapped = dict((i, args[i]) for i in xrange(len(args)))
@@ -52,12 +57,23 @@ class KerberosClient():
         return timestamp == authenticator[1]
 
     def run(self):
+        print "Starting authentication"
+        print "Requesting TGS Session Key and  Ticket-granting-ticket from Authentication Server..."
         TGS_key, TGT = self.authenticate()
-        CTS, CTS_key = self.authorize(TGT, TGS_key, 'Basic')
-        if self.service_request(CTS, CTS_key, URL_SS):
-            print send((CTS, 'hello there!'), 'http://localhost:8082/')
+        sys.stdout.write('Specify machine to connect to (Basic, Bad, Talk):')
+        machine = raw_input()
+        PORT = PORTS[machine]
+        print "Requesting Client-To-Server ticket and session key from Ticket Granting Server..."
+        CTS, CTS_key = self.authorize(TGT, TGS_key, machine)
+        print "Connecting to service server \'{}\' (http://localhost:{})".format(machine, PORT)
+        if self.service_request(CTS, CTS_key, 'http://localhost:{}/client'.format(PORT)):
+            while machine == 'Talk':
+                sys.stdout.write('>')
+                print send((CTS, raw_input()), 'http://localhost:{}/'.format(PORT))
+            print send((CTS, 'Hello world!'), 'http://localhost:{}/'.format(PORT))
         else:
             print 'Authentication failed, server not trusted'
+        print "Connection closed"
 
 if __name__ == '__main__':
     sys.stdout.write('Username: ')
