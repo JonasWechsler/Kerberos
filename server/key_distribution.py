@@ -20,7 +20,7 @@ def retrieve(ID):
 
 def configure_server(ID):
     ID = "server_{}".format(ID)
-    random_bytes = os.urandom(32)
+    random_bytes = os.urandom(16)
     key = b64encode(random_bytes).decode('utf-8')
     save(ID, key)
 

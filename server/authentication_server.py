@@ -17,12 +17,14 @@ class AuthenticationServer(server.ResponseServer):
     def response(self, username, _, addr):
         secret = db.retrieve_user(username)
         TGS_session_key = str(uuid.uuid1())
+
         TGS_encrypted = lib.encrypt(TGS_session_key, secret)
 
         expiration = time() + TIMEOUT
         TGT = (username, addr, expiration, TGS_session_key)
         TGS_server_key = db.retrieve_server(db.TGS_NAME)
-        TGT_encrypted = lib.encrypt(str(TGT), TGS_server_key)
+        TGT_encrypted = lib.encrypt_tuple(TGT, TGS_server_key)
+
         return (TGS_encrypted, TGT_encrypted)
 
 

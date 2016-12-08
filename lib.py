@@ -294,7 +294,7 @@ def sub(p1, p2, m, p):
 #############################################################################
 
 # e is a encryption function
-def encrypt_tuple(M, e, iv = 5):
+def encrypt_blockchain(M, e, iv = 5):
     M = map(int, M)
     C = [iv]
     for idx in xrange(len(M)):
@@ -302,7 +302,7 @@ def encrypt_tuple(M, e, iv = 5):
     return C
 
 # d is a decryption function
-def decrypt_tuple(C, d, iv = 5):
+def decrypt_blockchain(C, d, iv = 5):
     C = map(int, C)
     M = []
     for idx in xrange(1,len(C)):
@@ -323,8 +323,14 @@ BS = 16
 pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS) 
 unpad = lambda s : s[:-ord(s[len(s)-1:])]
 
+def one_way_hash(value):
+    #TODO don't actually use this
+    return hash(value)
+
 def encrypt(txt, key):
     txt = str(txt)
+    key = str(key)
+    key = one_way_hash(key)
     key = str(key)
     txt = pad(txt)
     key = pad(key)
@@ -334,12 +340,19 @@ def encrypt(txt, key):
 
 def decrypt(enc, key):
     key = str(key)
+    key = one_way_hash(key)
+    key = str(key)
     key = pad(key)
     enc = base64.b64decode(enc)
     iv = enc[:16]
     cipher = AES.new(key, AES.MODE_CBC, iv)
     return unpad(cipher.decrypt(enc[16:]))
 
-def one_way_hash(value):
-    #TODO don't actually use this
-    return hash(value)
+def encrypt_tuple(txt, key):
+    return encrypt(str(txt), key)
+
+from ast import literal_eval
+
+def decrypt_tuple(txt, key):
+    decr = decrypt(txt, key)
+    return literal_eval(decr)
