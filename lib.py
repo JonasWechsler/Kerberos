@@ -321,14 +321,14 @@ BS = 16
 pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS) 
 unpad = lambda s : s[:-ord(s[len(s)-1:])]
 
-def encrypt(key, txt):
+def encrypt(txt, key):
     txt = pad(txt)
     key = pad(key)
     iv = Random.new().read(AES.block_size)
     cipher = AES.new(key, AES.MODE_CBC, iv)
     return base64.b64encode(iv + cipher.encrypt(txt)) 
 
-def decrypt(key, enc):
+def decrypt(enc, key):
     key = pad(key)
     enc = base64.b64decode(enc)
     iv = enc[:16]
