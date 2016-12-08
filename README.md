@@ -12,28 +12,30 @@ Kerberos is an authentication protocol that allows the user and a server to mutu
 
 You can test the code by running
 ``` sh
-$ cd test
-$ python test.py
+cd test
+python test.py
 ```
 
 You can run all the servers at once by running
 ``` sh
-$ cd server
-$ python authentication_server.py &
-$ python tgs_server.py &
-$ python service_server_basic.py &
+cd server
+python authentication_server.py &
+python tgs_server.py &
+python service_server_basic.py &
+python service_server_bad.py &
+python service_server_talkative.py
 ```
 
 And then in a separate window running
 ``` sh
-$ cd client
-$ python register.py
+cd client
+python register.py
 ```
 
 To make an account and
 
 ``` sh
-$ python client.py
+python client.py
 ```
 
 to run the client. There are three service nodes right now. _Basic_ will start successfully and print out some ASCII art after successfully receiving a message. _Bad_ will start normally but return an incorrect timestamp, exposing itself as a bad server. _Talk_ will loop infinitely repeating what you say back to you, to demonstrate continuous Client-Server interaction.
