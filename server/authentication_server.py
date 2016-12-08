@@ -5,21 +5,24 @@ import uuid
 import server
 import cgi
 
+import sys
+sys.path.insert(0, '..')
+import lib
+
+SERVER = 'localhost'
 PORT_NUMBER = 8080
 TIMEOUT = 60*60 #An hour
 
-#This class will handles any incoming request from
-#the browser 
 class AuthenticationServer(server.ResponseServer):
-    def response(username, _, addr):
+    def response(self, username, _, addr):
         secret = db.retrieve_user(username)
-        TGS_session_key = uuid.uuid1()
-        TGS_encrypted = encrypt(secret, TGS_session_key)
+        TGS_session_key = str(uuid.uuid1())
+        TGS_encrypted = lib.encrypt(TGS_session_key, secret)
 
         expiration = time() + TIMEOUT
         TGT = (username, addr, expiration, TGS_session_key)
         TGS_server_key = db.retrieve_server(db.TGS_NAME)
-        TGT_encrypted = encrypt_tuple(TGT, lambda v: encrypt(v, TGS_server_key))
+        TGT_encrypted = lib.encrypt(str(TGT), TGS_server_key)
         return (TGS_encrypted, TGT_encrypted)
 
 
@@ -43,4 +46,4 @@ class AuthenticationServer(server.ResponseServer):
         return
 
 if __name__ == '__main__':
-    server.start(AuthenticationServer, db.AS_NAME, 'localhost', 8080)
+    server.start(AuthenticationServer, db.AS_NAME, SERVER, PORT_NUMBER)

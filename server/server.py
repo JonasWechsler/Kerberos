@@ -2,19 +2,17 @@ from BaseHTTPServer import BaseHTTPRequestHandler
 import key_distribution as db
 import urlparse
 
-
 class ResponseServer(BaseHTTPRequestHandler):
-    def response(A, B, addr):
+    def response(self, A, B, addr):
         raise NotImplementedError
         return
 
     def do_GET(self):
         parsed_path = urlparse.urlparse(self.path)
-        query = urlparse.parse_qsl(parsed_path.query) + [None]
-        A, B = query[0], query[1]
+        query = urlparse.parse_qsl(parsed_path.query)
+        A, B = query[0][1], query[1][1]
         
-        client_address = self.client_address
-        message = '\r\n'.join(response(A, B, client_address))
+        message = '\r\n'.join(self.response(A, B, self.client_address))
         
         self.send_response(200)
         self.send_header('Content-type','text/html')

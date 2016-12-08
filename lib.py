@@ -294,7 +294,8 @@ def sub(p1, p2, m, p):
 #############################################################################
 
 # e is a encryption function
-def encypt_tuple(M, e, iv = 5):
+def encrypt_tuple(M, e, iv = 5):
+    M = map(int, M)
     C = [iv]
     for idx in xrange(len(M)):
         C.append(e(M[idx] ^ C[idx]))
@@ -302,6 +303,7 @@ def encypt_tuple(M, e, iv = 5):
 
 # d is a decryption function
 def decrypt_tuple(C, d, iv = 5):
+    C = map(int, C)
     M = []
     for idx in xrange(1,len(C)):
         M.append(d(C[idx]) ^ C[idx-1])
@@ -322,15 +324,22 @@ pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
 unpad = lambda s : s[:-ord(s[len(s)-1:])]
 
 def encrypt(txt, key):
+    txt = str(txt)
+    key = str(key)
     txt = pad(txt)
     key = pad(key)
     iv = Random.new().read(AES.block_size)
     cipher = AES.new(key, AES.MODE_CBC, iv)
-    return base64.b64encode(iv + cipher.encrypt(txt)) 
+    return base64.b64encode(iv + cipher.encrypt(txt))
 
 def decrypt(enc, key):
+    key = str(key)
     key = pad(key)
     enc = base64.b64decode(enc)
     iv = enc[:16]
     cipher = AES.new(key, AES.MODE_CBC, iv)
     return unpad(cipher.decrypt(enc[16:]))
+
+def one_way_hash(value):
+    #TODO don't actually use this
+    return hash(value)

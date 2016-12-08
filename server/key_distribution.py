@@ -19,7 +19,8 @@ def retrieve(ID):
     return data
 
 def configure_server(ID):
-    random_bytes = os.urandom(128)
+    ID = "server_{}".format(ID)
+    random_bytes = os.urandom(32)
     key = b64encode(random_bytes).decode('utf-8')
     save(ID, key)
 
@@ -30,11 +31,15 @@ def one_way_hash(word):
 def configure_user(ID, passwd):
     key = one_way_hash(passwd)
     ID = "user_{}".format(ID)
+    
+    if os.path.isfile("{}/{}.data".format(FOLDER, ID)):
+        return "User {} already exists".format(ID)
+
     save(ID, key)
-    return "Registerd {}".format(ID)
+    return "Register {}".format(ID)
 
 def retrieve_user(ID):
-    return str(retrieve("user_".format(ID)))
+    return str(retrieve("user_{}".format(ID)))
 
 def retrieve_server(ID):
-    return str(retrieve(ID))
+    return str(retrieve("server_{}".format(ID)))
