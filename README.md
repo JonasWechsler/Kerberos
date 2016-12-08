@@ -42,17 +42,23 @@ to run the client. There are three service nodes right now. _Basic_ will start s
 My implementation of the Kerberos protocol involves two log-on servers and a third independent service server. In short, the steps for verification are:
 
 The user sends their username / password pairing once to register themself so the server can hash it and store it under the user's username
+
 ##### Authentication (Interaction with the Authentication Server)
+
 - The user sends their username and the server looks up their hashed password
 - A: The server sends back a session key (s) hashed by the hashed password
 - B: The server sends back a TGT (Ticket-Granting-Ticket), consisting of the user's name, address, expiration date, and session key (s), all hashed with the TGS' (Ticket-Granting-Server) private key
+
 ##### Authorization (Interaction with the Ticket Granting Server)
+
 - C: The user sends message B and a service ID
 - D: The user sends their ID and timestamp encrypted by their sessionkey S
 The server decrypts message C and D
 - E: The server sends back a CTS (Client-To-Server ticket) consisting of the user's name, address, expiration date, and Service session key (t) encrypted by the service's private key
 - F: The server sends back the Service session key (t) encrypted with their sessionkey S
+
 ##### Service Request (Interaction with the Service Node)
+
 - G: The user ends message E
 - H: The user sends an authenticator with their name and timestamp encrypted with their Service session key (t)
 The server decrypts the ticket E with their secret key and then uses the session key to decrypt H
